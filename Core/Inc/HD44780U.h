@@ -54,7 +54,6 @@ struct lcd_hd44780u
     void (*delay)(uint32_t);
 };
 
-void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data);
 void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data);
 void init_lcd(struct lcd_hd44780u *lcd);
 #endif
