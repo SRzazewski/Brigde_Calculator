@@ -77,7 +77,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  lcd_0.if_mode = mode_4_bits;
+  lcd_0.interface = mode_4_bits;
   lcd_0.pinout.enable_port = (uint32_t*)LCD_Enable_GPIO_Port;
   lcd_0.pinout.enable_pin = LCD_Enable_Pin;
   lcd_0.pinout.rs_port = (uint32_t*)LCD_RS_GPIO_Port;

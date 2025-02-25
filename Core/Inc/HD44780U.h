@@ -24,6 +24,12 @@ enum line_mode
     two_lines = 1
 };
 
+enum rs_mode 
+{
+    instruction_register = RESET_OUTPUT,
+    data_register = SET_OUTPUT
+};
+
 struct lcd_pinout
 {
     uint32_t *enable_port;
@@ -42,11 +48,13 @@ struct lcd_pinout
 
 struct lcd_hd44780u
 {
-    enum interface_mode if_mode;
+    enum interface_mode interface;
     struct lcd_pinout pinout;
 
     void (*delay)(uint32_t);
 };
 
+void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data);
+void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data);
 void init_lcd(struct lcd_hd44780u *lcd);
 #endif
