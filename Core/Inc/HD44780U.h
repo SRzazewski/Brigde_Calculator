@@ -56,4 +56,8 @@ struct lcd_hd44780u
 
 void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data);
 void init_lcd(struct lcd_hd44780u *lcd);
+void clean_display(struct lcd_hd44780u *lcd);
+void reset_address_counter(struct lcd_hd44780u *lcd);
+void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data);
+void display_control(struct lcd_hd44780u *lcd, uint8_t data);
 #endif

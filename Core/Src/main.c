@@ -110,20 +110,36 @@ int main(void)
 
   HAL_GPIO_WritePin(LCD_Backlight_Control_GPIO_Port, LCD_Backlight_Control_Pin, GPIO_PIN_SET);
 
-  write_data(&lcd_0, instruction_register, 0x01);
+  clean_display(&lcd_0);
   HAL_Delay(1);
 
-  write_data(&lcd_0, instruction_register, 0x02);
+  reset_address_counter(&lcd_0);
   HAL_Delay(1);
 
-  write_data(&lcd_0, data_register, 0x53);
+  write_data(&lcd_0, data_register, 0x42);
+  write_data(&lcd_0, data_register, 0x72);
+  write_data(&lcd_0, data_register, 0x69);
+  write_data(&lcd_0, data_register, 0x64);
+  write_data(&lcd_0, data_register, 0x67);
+  write_data(&lcd_0, data_register, 0x65);
   HAL_Delay(1);
 
-  write_data(&lcd_0, data_register, 0x52);
+  set_address_counter(&lcd_0, 0xC0);
+
+  write_data(&lcd_0, data_register, 0x43);
+  write_data(&lcd_0, data_register, 0x61);
+  write_data(&lcd_0, data_register, 0x6C);
+  write_data(&lcd_0, data_register, 0x63);
+  write_data(&lcd_0, data_register, 0x75);
+  write_data(&lcd_0, data_register, 0x6C);
+  write_data(&lcd_0, data_register, 0x61);
+  write_data(&lcd_0, data_register, 0x74);
+  write_data(&lcd_0, data_register, 0x6F);
+  write_data(&lcd_0, data_register, 0x72);
   HAL_Delay(1);
 
-  write_data(&lcd_0, instruction_register, 0x0C);
-
+  display_control(&lcd_0, 0x0C);
+  
 
   /* USER CODE END 2 */
 

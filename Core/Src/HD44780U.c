@@ -53,3 +53,29 @@ void init_lcd(struct lcd_hd44780u *lcd)
     write_data(lcd, instruction_register, 0x06);
 	(lcd->delay)(1000);
 }
+
+void clean_display(struct lcd_hd44780u *lcd)
+{
+    write_data(lcd, instruction_register, 0x01);
+}
+
+void reset_address_counter(struct lcd_hd44780u *lcd)
+{
+    write_data(lcd, instruction_register, 0x02);
+}
+
+void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data)
+{
+    if(0x80 == (0x80 & data))
+    {
+        write_data(lcd, instruction_register, data);
+    }
+}
+
+void display_control(struct lcd_hd44780u *lcd, uint8_t data)
+{
+    if(0x08 == (0xF8 & data))
+    {
+        write_data(lcd, instruction_register, data);
+    }
+}
