@@ -163,7 +163,7 @@ int main(void)
     if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
     {
       adc_value = HAL_ADC_GetValue(&hadc1);
-      (void)sprintf(adc_char_value, " 1234: %d", adc_value);
+      (void)sprintf(adc_char_value, "Value: %d", adc_value);
       clean_display(&lcd_0);
       display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
       HAL_ADC_Start(&hadc1);

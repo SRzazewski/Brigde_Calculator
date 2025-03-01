@@ -1,7 +1,76 @@
 #include "HD44780U.h"
-#include "HD44780U_A00_signs.h"
-
 #include <stddef.h>
+
+const lcd_sign_val sign_array[] = 
+{
+    {' ', WHITESPACE},
+    {',', COMMA},
+    {'.', FULL_STOP},
+    {'0', NUM_0},
+    {'1', NUM_1},
+    {'2', NUM_2},
+    {'3', NUM_3},
+    {'4', NUM_4},
+    {'5', NUM_5},
+    {'6', NUM_6},
+    {'7', NUM_7},
+    {'8', NUM_8},
+    {'9', NUM_9},
+    {':', COLON},
+    {';', SEMICOLON},
+    {'A', LETTER_A},
+    {'B', LETTER_B},
+    {'C', LETTER_C},
+    {'D', LETTER_D},
+    {'E', LETTER_E},
+    {'F', LETTER_F},
+    {'G', LETTER_G},
+    {'H', LETTER_H},
+    {'I', LETTER_I},
+    {'J', LETTER_J},
+    {'K', LETTER_K},
+    {'L', LETTER_L},
+    {'M', LETTER_M},
+    {'N', LETTER_N},
+    {'O', LETTER_O},
+    {'P', LETTER_P},
+    {'Q', LETTER_Q},
+    {'R', LETTER_R},
+    {'S', LETTER_S},
+    {'T', LETTER_T},
+    {'U', LETTER_U},
+    {'V', LETTER_V},
+    {'W', LETTER_W},
+    {'X', LETTER_X},
+    {'Y', LETTER_Y},
+    {'Z', LETTER_Z},
+    {'a', LETTER_a},
+    {'b', LETTER_b},
+    {'c', LETTER_c},
+    {'d', LETTER_d},
+    {'e', LETTER_e},
+    {'f', LETTER_f},
+    {'g', LETTER_g},
+    {'h', LETTER_h},
+    {'i', LETTER_i},
+    {'j', LETTER_j},
+    {'k', LETTER_k},
+    {'l', LETTER_l},
+    {'m', LETTER_m},
+    {'n', LETTER_n},
+    {'o', LETTER_o},
+    {'p', LETTER_p},
+    {'q', LETTER_q},
+    {'r', LETTER_r},
+    {'s', LETTER_s},
+    {'t', LETTER_t},
+    {'u', LETTER_u},
+    {'v', LETTER_v},
+    {'w', LETTER_w},
+    {'x', LETTER_x},
+    {'y', LETTER_y},
+    {'z', LETTER_z}
+};
 
 static void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data)
 {
@@ -60,6 +129,7 @@ void init_lcd(struct lcd_hd44780u *lcd)
 void clean_display(struct lcd_hd44780u *lcd)
 {
     write_data(lcd, instruction_register, 0x01);
+    (lcd->delay)(1600);
 }
 
 void reset_address_counter(struct lcd_hd44780u *lcd)
@@ -85,73 +155,18 @@ void display_control(struct lcd_hd44780u *lcd, uint8_t data)
 
 void display_string(struct lcd_hd44780u *lcd, char *string, size_t string_size)
 {
+    clean_display(lcd);
     if(0 < string_size)
     {
         for(size_t i = 0; i < string_size; ++i)
         {
-            if(' ' == string[i])
+            for(size_t j = 0; j < (sizeof(sign_array)/sizeof(lcd_sign_val)); ++j)
             {
-                write_data(lcd, data_register, WHITESPACE);
-            }
-            else if(',' == string[i])
-            {
-                write_data(lcd, data_register, COMMA);
-            }
-            else if('.' == string[i])
-            {
-                write_data(lcd, data_register, FULL_STOP);
-            }
-            else if('0' == string[i])
-            {
-                write_data(lcd, data_register, NUM_0);
-            }
-            else if('1' == string[i])
-            {
-                write_data(lcd, data_register, NUM_1);
-            }
-            else if('2' == string[i])
-            {
-                write_data(lcd, data_register, NUM_2);
-            }
-            else if('3' == string[i])
-            {
-                write_data(lcd, data_register, NUM_3);
-            }
-            else if('4' == string[i])
-            {
-                write_data(lcd, data_register, NUM_4);
-            }
-            else if('5' == string[i])
-            {
-                write_data(lcd, data_register, NUM_5);
-            }
-            else if('6' == string[i])
-            {
-                write_data(lcd, data_register, NUM_6);
-            }
-            else if('7' == string[i])
-            {
-                write_data(lcd, data_register, NUM_7);
-            }
-            else if('8' == string[i])
-            {
-                write_data(lcd, data_register, NUM_8);
-            }
-            else if('9' == string[i])
-            {
-                write_data(lcd, data_register, NUM_9);
-            }
-            else if(':' == string[i])
-            {
-                write_data(lcd, data_register, COLON);
-            }
-            else if(';' == string[i])
-            {
-                write_data(lcd, data_register, SEMICOLON);
-            }
-            else
-            {
-
+                if(string[i] == sign_array[j].sign)
+                {
+                    write_data(lcd, data_register, sign_array[j].val);
+                    break;
+                }
             }
         }
     }
