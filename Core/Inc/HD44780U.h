@@ -1,7 +1,8 @@
 #ifndef HD44780U
 #define HD44780U
 
-#include "stdint.h"
+#include <stdint.h>
+#include <stddef.h>
 
 #define RESET_OUTPUT 0
 #define SET_OUTPUT 1
@@ -60,4 +61,6 @@ void clean_display(struct lcd_hd44780u *lcd);
 void reset_address_counter(struct lcd_hd44780u *lcd);
 void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data);
 void display_control(struct lcd_hd44780u *lcd, uint8_t data);
+void display_string(struct lcd_hd44780u *lcd, char *string, size_t string_size);
+
 #endif
