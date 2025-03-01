@@ -18,13 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "HD44780U.h"
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,7 +69,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  uint16_t adc_value = 0;
+  char adc_char_value[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,6 +107,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 	init_lcd(&lcd_0);
 
@@ -140,6 +143,7 @@ int main(void)
 
   display_control(&lcd_0, 0x0C);
   
+  HAL_ADC_Start(&hadc1);
 
   /* USER CODE END 2 */
 
@@ -150,11 +154,20 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_Delay(500);
-	  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+    // HAL_Delay(500);
+	  // HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
 	  
-    HAL_Delay(500);
-	  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+    HAL_Delay(100);
+	  // HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+
+    if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+    {
+      adc_value = HAL_ADC_GetValue(&hadc1);
+      (void)sprintf(adc_char_value, " 1234: %d", adc_value);
+      clean_display(&lcd_0);
+      display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
+      HAL_ADC_Start(&hadc1);
+    }
   }
   /* USER CODE END 3 */
 }
