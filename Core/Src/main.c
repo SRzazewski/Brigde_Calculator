@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -53,7 +54,10 @@ struct lcd_hd44780u lcd_0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -108,7 +112,9 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_ADC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start_IT(&htim2);
 	init_lcd(&lcd_0);
 
   HAL_GPIO_WritePin(LCD_Backlight_Control_GPIO_Port, LCD_Backlight_Control_Pin, GPIO_PIN_SET);
@@ -119,26 +125,14 @@ int main(void)
   reset_address_counter(&lcd_0);
   HAL_Delay(1);
 
-  write_data(&lcd_0, data_register, 0x42);
-  write_data(&lcd_0, data_register, 0x72);
-  write_data(&lcd_0, data_register, 0x69);
-  write_data(&lcd_0, data_register, 0x64);
-  write_data(&lcd_0, data_register, 0x67);
-  write_data(&lcd_0, data_register, 0x65);
+  (void)sprintf(adc_char_value, "Bridge");
+  display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
   HAL_Delay(1);
 
   set_address_counter(&lcd_0, 0xC0);
 
-  write_data(&lcd_0, data_register, 0x43);
-  write_data(&lcd_0, data_register, 0x61);
-  write_data(&lcd_0, data_register, 0x6C);
-  write_data(&lcd_0, data_register, 0x63);
-  write_data(&lcd_0, data_register, 0x75);
-  write_data(&lcd_0, data_register, 0x6C);
-  write_data(&lcd_0, data_register, 0x61);
-  write_data(&lcd_0, data_register, 0x74);
-  write_data(&lcd_0, data_register, 0x6F);
-  write_data(&lcd_0, data_register, 0x72);
+  (void)sprintf(adc_char_value, "Calculator");
+  display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
   HAL_Delay(1);
 
   display_control(&lcd_0, 0x0C);

@@ -79,7 +79,7 @@ static void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data)
     HAL_GPIO_WritePin(lcd->pinout.db6_port, lcd->pinout.db6_pin, (0x40 & data) >> 6);
     HAL_GPIO_WritePin(lcd->pinout.db5_port, lcd->pinout.db5_pin, (0x20 & data) >> 5);
     HAL_GPIO_WritePin(lcd->pinout.db4_port, lcd->pinout.db4_pin, (0x10 & data) >> 4);
-    (lcd->delay)(450);
+    (lcd->delay)(1000);
     HAL_GPIO_WritePin(lcd->pinout.enable_port, lcd->pinout.enable_pin, RESET_OUTPUT);
 }
 
