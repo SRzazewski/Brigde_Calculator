@@ -1,4 +1,5 @@
 #include "HD44780U.h"
+#include "bridge_timers.h"
 #include <stddef.h>
 
 const lcd_sign_val sign_array[] = 
@@ -99,31 +100,48 @@ void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data)
 
 void init_lcd(struct lcd_hd44780u *lcd)
 {
-    (lcd->delay)(40000);
-    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
-    write_data_4_bits(lcd, 0x30);
-	(lcd->delay)(5000);
+    (void)timer_start(INIT_TIMER_40MS);
+    while(!is_timer_reached(INIT_TIMER_40MS)){}
+    (void)timer_reset(INIT_TIMER_40MS);
 
     HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
     write_data_4_bits(lcd, 0x30);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_5MS);
+    while(!is_timer_reached(INIT_TIMER_5MS)){}
+    (void)timer_reset(INIT_TIMER_5MS);
 
     HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
     write_data_4_bits(lcd, 0x30);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
+
+    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
+    write_data_4_bits(lcd, 0x30);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
 
     HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
     write_data_4_bits(lcd, 0x20);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
 
     write_data(lcd, instruction_register, 0x28);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
 
     write_data(lcd, instruction_register, 0x0E);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
 
     write_data(lcd, instruction_register, 0x06);
-	(lcd->delay)(1000);
+    (void)timer_start(INIT_TIMER_1MS);
+    while(!is_timer_reached(INIT_TIMER_1MS)){}
+    (void)timer_reset(INIT_TIMER_1MS);
 }
 
 void clean_display(struct lcd_hd44780u *lcd)

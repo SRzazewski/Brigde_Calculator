@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "HD44780U.h"
+#include "bridge_timers.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -49,6 +50,7 @@ void delay_62_5ns(uint32_t ns);
 
 /* USER CODE BEGIN PV */
 struct lcd_hd44780u lcd_0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,7 +58,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  
+  if(htim->Instance == TIM2)
+  { 
+    (void)timers_update();
+	}
 }
 /* USER CODE END PFP */
 
