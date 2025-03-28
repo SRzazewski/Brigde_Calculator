@@ -1,5 +1,6 @@
 #include "HD44780U.h"
 #include "bridge_timers.h"
+#include "bridge_common.h"
 #include <stddef.h>
 
 const lcd_sign_val sign_array[] = 
@@ -98,56 +99,104 @@ void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data)
     }
 }
 
-void init_lcd(struct lcd_hd44780u *lcd)
+uint8_t init_lcd(struct lcd_hd44780u *lcd)
 {
-    (void)timer_start(INIT_TIMER_40MS);
-    while(!is_timer_reached(INIT_TIMER_40MS)){}
-    (void)timer_reset(INIT_TIMER_40MS);
+    static step init_step = STEP_0;
+    uint8_t ret = 0;
 
-    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
-    write_data_4_bits(lcd, 0x30);
-    (void)timer_start(INIT_TIMER_5MS);
-    while(!is_timer_reached(INIT_TIMER_5MS)){}
-    (void)timer_reset(INIT_TIMER_5MS);
+    switch (init_step)
+    {
+    case STEP_0:
+        (void)timer_start(INIT_TIMER_40MS);
+        init_step = STEP_1;
+        break;
 
-    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
-    write_data_4_bits(lcd, 0x30);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_1:
+        if(is_timer_reached(INIT_TIMER_40MS))
+        {
+            (void)timer_reset(INIT_TIMER_40MS);
+            HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
+            write_data_4_bits(lcd, 0x30);
+            (void)timer_start(INIT_TIMER_5MS);
+            init_step = STEP_2;
+        }
+        break;
 
-    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
-    write_data_4_bits(lcd, 0x30);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_2:
+        if(is_timer_reached(INIT_TIMER_5MS))
+        {
+            (void)timer_reset(INIT_TIMER_5MS);
+            HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
+            write_data_4_bits(lcd, 0x30);
+            (void)timer_start(INIT_TIMER_1MS);
+            init_step = STEP_3;
+        }
+        break;
 
-    HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
-    write_data_4_bits(lcd, 0x20);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_3:
+        if(is_timer_reached(INIT_TIMER_1MS))
+        {
+            (void)timer_reset(INIT_TIMER_1MS);
+            HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
+            write_data_4_bits(lcd, 0x30);
+            (void)timer_start(INIT_TIMER_1MS);
+            init_step = STEP_4;
+        }
+        break;
 
-    write_data(lcd, instruction_register, 0x28);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_4:
+        if(is_timer_reached(INIT_TIMER_1MS))
+        {
+            (void)timer_reset(INIT_TIMER_1MS);
+            HAL_GPIO_WritePin(lcd->pinout.rs_port, lcd->pinout.rs_pin, RESET_OUTPUT);
+            write_data_4_bits(lcd, 0x20);
+            (void)timer_start(INIT_TIMER_1MS);
+            init_step = STEP_5;
+        }
+        break;
 
-    write_data(lcd, instruction_register, 0x0E);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_5:
+        if(is_timer_reached(INIT_TIMER_1MS))
+        {
+            (void)timer_reset(INIT_TIMER_1MS);
+            write_data(lcd, instruction_register, 0x28);
+            (void)timer_start(INIT_TIMER_1MS);
+            init_step = STEP_6;
+        }
+        break;
 
-    write_data(lcd, instruction_register, 0x06);
-    (void)timer_start(INIT_TIMER_1MS);
-    while(!is_timer_reached(INIT_TIMER_1MS)){}
-    (void)timer_reset(INIT_TIMER_1MS);
+    case STEP_6:
+        if(is_timer_reached(INIT_TIMER_1MS))
+        {
+            (void)timer_reset(INIT_TIMER_1MS);
+            write_data(lcd, instruction_register, 0x0E);
+            (void)timer_start(INIT_TIMER_1MS);
+            init_step = STEP_7;
+        }
+        break;
+
+    case STEP_7:
+        if(is_timer_reached(INIT_TIMER_1MS))
+        {
+            (void)timer_reset(INIT_TIMER_1MS);
+            write_data(lcd, instruction_register, 0x06);
+            ret = 1;
+            init_step = STEP_0;
+        }
+        break;
+    
+    default:
+        init_step = STEP_0;
+        break;
+    }
+
+    return ret;
 }
 
 void clean_display(struct lcd_hd44780u *lcd)
 {
     write_data(lcd, instruction_register, 0x01);
-    (lcd->delay)(1600);
+    (lcd->delay)(1600); //1600 ms
 }
 
 void reset_address_counter(struct lcd_hd44780u *lcd)

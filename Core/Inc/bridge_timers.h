@@ -4,6 +4,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define STEP_DELAY 1
+
+#define INIT_TIMER_40MS_TIME            (40 - STEP_DELAY)
+#define INIT_TIMER_5MS_TIME             (5 - STEP_DELAY)
+#define INIT_TIMER_1MS_TIME             (1 - STEP_DELAY)
+#define CLEAN_DISPLAY_TIMER_TIME        (2 - STEP_DELAY)
+#define WRITE_DATA_4_BITS_TIMER_TIME    (1 - STEP_DELAY)
+
 typedef struct bridge_timer
 {
   uint32_t current_value;
@@ -25,6 +33,8 @@ typedef enum bridge_timers
     INIT_TIMER_40MS = 0,
     INIT_TIMER_5MS,
     INIT_TIMER_1MS,
+    CLEAN_DISPLAY_TIMER,
+    WRITE_DATA_4_BITS_TIMER,
     TIMERS_NUM
 }bridge_timers;
 

@@ -120,7 +120,7 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
-	init_lcd(&lcd_0);
+	while(0 == init_lcd(&lcd_0)){}
 
   HAL_GPIO_WritePin(LCD_Backlight_Control_GPIO_Port, LCD_Backlight_Control_Pin, GPIO_PIN_SET);
 

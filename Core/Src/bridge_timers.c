@@ -3,10 +3,12 @@
 
 bridge_timer timers[] = 
 {
-    /*current_value,    start_value,    is_running, is_counted*/
-    {0,                 40,             false,      false}, //INIT_TIMER_40MS
-    {0,                 5,              false,      false}, //INIT_TIMER_5MS
-    {0,                 1,              false,      false}  //INIT_TIMER_1MS
+/*current_value,start_value,                is_running, is_counted*/
+    {0,         INIT_TIMER_40MS_TIME,           false,      false}, //INIT_TIMER_40MS
+    {0,         INIT_TIMER_5MS_TIME,            false,      false}, //INIT_TIMER_5MS
+    {0,         INIT_TIMER_1MS_TIME,            false,      false}, //INIT_TIMER_1MS
+    {0,         CLEAN_DISPLAY_TIMER_TIME,       false,      false}, //CLEAN_DISPLAY_TIMER
+    {0,         WRITE_DATA_4_BITS_TIMER_TIME,   false,      false}  //CLEAN_DISPLAY_TIMER
 };
 
 timer_err timer_start(bridge_timers timer)
@@ -65,9 +67,13 @@ timer_err timers_update()
     {
         if (true == timers[i].is_running)
         {
-            if  (0 == --timers[i].current_value)
+            if  (0 == timers[i].current_value)
             {
                 timers[i].is_reached = true;
+            }
+            else
+            {
+                timers[i].current_value--;
             }
         }
     }
