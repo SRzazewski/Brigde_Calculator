@@ -11,6 +11,7 @@
 #define INIT_TIMER_1MS_TIME             (1 - STEP_DELAY)
 #define CLEAN_DISPLAY_TIMER_TIME        (2 - STEP_DELAY)
 #define WRITE_DATA_4_BITS_TIMER_TIME    (1 - STEP_DELAY)
+#define ADC_MESUR_TIMER_TIME            (50)
 
 typedef struct bridge_timer
 {
@@ -35,6 +36,7 @@ typedef enum bridge_timers
     INIT_TIMER_1MS,
     CLEAN_DISPLAY_TIMER,
     WRITE_DATA_4_BITS_TIMER,
+    ADC_MESUR_TIMER,
     TIMERS_NUM
 }bridge_timers;
 

@@ -8,7 +8,8 @@ bridge_timer timers[] =
     {0,         INIT_TIMER_5MS_TIME,            false,      false}, //INIT_TIMER_5MS
     {0,         INIT_TIMER_1MS_TIME,            false,      false}, //INIT_TIMER_1MS
     {0,         CLEAN_DISPLAY_TIMER_TIME,       false,      false}, //CLEAN_DISPLAY_TIMER
-    {0,         WRITE_DATA_4_BITS_TIMER_TIME,   false,      false}  //CLEAN_DISPLAY_TIMER
+    {0,         WRITE_DATA_4_BITS_TIMER_TIME,   false,      false}, //WRITE_DATA_4_BITS_TIMER
+    {0,         ADC_MESUR_TIMER_TIME,           false,      false}  //WRITE_DATA_4_BITS_TIMER
 };
 
 timer_err timer_start(bridge_timers timer)

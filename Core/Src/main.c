@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "HD44780U.h"
 #include "bridge_timers.h"
+#include "state_machine.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -49,7 +50,7 @@ void delay_62_5ns(uint32_t ns);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-struct lcd_hd44780u lcd_0;
+lcd_hd44780u lcd_0;
 
 /* USER CODE END PV */
 
@@ -119,30 +120,14 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  set_modules(&lcd_0);
+  start_bc_state_machine();
   HAL_TIM_Base_Start_IT(&htim2);
-	while(0 == init_lcd(&lcd_0)){}
+	// while(0 == init_lcd(&lcd_0)){}
 
   HAL_GPIO_WritePin(LCD_Backlight_Control_GPIO_Port, LCD_Backlight_Control_Pin, GPIO_PIN_SET);
-
-  clean_display(&lcd_0);
-  HAL_Delay(1);
-
-  reset_address_counter(&lcd_0);
-  HAL_Delay(1);
-
-  (void)sprintf(adc_char_value, "Bridge");
-  display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
-  HAL_Delay(1);
-
-  set_address_counter(&lcd_0, 0xC0);
-
-  (void)sprintf(adc_char_value, "Calculator");
-  display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
-  HAL_Delay(1);
-
-  display_control(&lcd_0, 0x0C);
   
-  HAL_ADC_Start(&hadc1);
+  (void)timer_start(ADC_MESUR_TIMER);
 
   /* USER CODE END 2 */
 
@@ -153,11 +138,15 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // HAL_Delay(500);
-	  // HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
-	  
-    HAL_Delay(100);
-	  // HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+
+    bc_state_machine_routine();
+
+    if (is_timer_reached(ADC_MESUR_TIMER))
+    {
+      (void)timer_reset(ADC_MESUR_TIMER);
+      HAL_ADC_Start(&hadc1);
+      (void)timer_start(ADC_MESUR_TIMER);
+    }
 
     if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
     {
@@ -165,7 +154,6 @@ int main(void)
       (void)sprintf(adc_char_value, "Value: %d", adc_value);
       clean_display(&lcd_0);
       display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
-      HAL_ADC_Start(&hadc1);
     }
   }
   /* USER CODE END 3 */

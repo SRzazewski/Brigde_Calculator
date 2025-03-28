@@ -48,13 +48,13 @@ struct lcd_pinout
     uint16_t db4_pin;
 };
 
-struct lcd_hd44780u
+typedef struct lcd_hd44780u
 {
     enum interface_mode interface;
     struct lcd_pinout pinout;
 
     void (*delay)(uint32_t);
-};
+}lcd_hd44780u;
 
 typedef struct
 {
