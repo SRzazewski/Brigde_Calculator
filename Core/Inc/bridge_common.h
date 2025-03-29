@@ -25,4 +25,12 @@ typedef enum step
     STEP_19
 }step;
 
+typedef enum module_state
+{
+    MODULE_IDLE_STATE = 0,
+    MODULE_INIT_STATE,
+    MODULE_INITIALIZED_STATE,
+    MODULE_ERROR_STATE
+}mod_state;
+
 #endif /* BRIDGE_COMMON_ */

@@ -74,7 +74,7 @@ const lcd_sign_val sign_array[] =
     {'z', LETTER_z}
 };
 
-static void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data)
+static void write_data_4_bits(lcd_hd44780u *lcd, uint8_t data)
 {
     HAL_GPIO_WritePin(lcd->pinout.enable_port, lcd->pinout.enable_pin, SET_OUTPUT);
     HAL_GPIO_WritePin(lcd->pinout.db7_port, lcd->pinout.db7_pin, (0x80 & data) >> 7);
@@ -85,7 +85,7 @@ static void write_data_4_bits(struct lcd_hd44780u *lcd, uint8_t data)
     HAL_GPIO_WritePin(lcd->pinout.enable_port, lcd->pinout.enable_pin, RESET_OUTPUT);
 }
 
-void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data)
+void write_data(lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data)
 {
     if(lcd->interface == mode_4_bits)
     {
@@ -99,7 +99,7 @@ void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data)
     }
 }
 
-uint8_t init_lcd(struct lcd_hd44780u *lcd)
+uint8_t init_lcd(lcd_hd44780u *lcd)
 {
     static step init_step = STEP_0;
     uint8_t ret = 0;
@@ -193,18 +193,18 @@ uint8_t init_lcd(struct lcd_hd44780u *lcd)
     return ret;
 }
 
-void clean_display(struct lcd_hd44780u *lcd)
+void clean_display(lcd_hd44780u *lcd)
 {
     write_data(lcd, instruction_register, 0x01);
     (lcd->delay)(1600); //minumum 1600 ms
 }
 
-void reset_address_counter(struct lcd_hd44780u *lcd)
+void reset_address_counter(lcd_hd44780u *lcd)
 {
     write_data(lcd, instruction_register, 0x02);
 }
 
-void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data)
+void set_address_counter(lcd_hd44780u *lcd, uint8_t data)
 {
     if(0x80 == (0x80 & data))
     {
@@ -212,7 +212,7 @@ void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data)
     }
 }
 
-void display_control(struct lcd_hd44780u *lcd, uint8_t data)
+void display_control(lcd_hd44780u *lcd, uint8_t data)
 {
     if(0x08 == (0xF8 & data))
     {
@@ -220,7 +220,7 @@ void display_control(struct lcd_hd44780u *lcd, uint8_t data)
     }
 }
 
-void display_string(struct lcd_hd44780u *lcd, char *string, size_t string_size)
+void display_string(lcd_hd44780u *lcd, char *string, size_t string_size)
 {
     clean_display(lcd);
     if(0 < string_size)
@@ -236,5 +236,33 @@ void display_string(struct lcd_hd44780u *lcd, char *string, size_t string_size)
                 }
             }
         }
+    }
+}
+
+void display_routine(lcd_hd44780u *lcd)
+{
+    switch (lcd->curr_display_state)
+    {
+    case MODULE_IDLE_STATE:
+        /* idle */
+        break;
+
+    case MODULE_INIT_STATE:
+        if (1 == init_lcd(lcd))
+        {
+            lcd->curr_display_state = MODULE_INITIALIZED_STATE;
+        }
+        break;
+
+    case MODULE_INITIALIZED_STATE:
+        /* code */
+        break;
+
+    case MODULE_ERROR_STATE:
+        /* code */
+        break;
+    
+    default:
+        break;
     }
 }

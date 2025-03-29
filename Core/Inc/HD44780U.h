@@ -2,6 +2,7 @@
 #define HD44780U_H_
 
 #include "HD44780U_A00_signs.h"
+#include "bridge_common.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -52,9 +53,11 @@ typedef struct lcd_hd44780u
 {
     enum interface_mode interface;
     struct lcd_pinout pinout;
+    mod_state curr_display_state;
 
     void (*delay)(uint32_t);
 }lcd_hd44780u;
+
 
 typedef struct
 {
@@ -62,12 +65,13 @@ typedef struct
     uint8_t val;
 } lcd_sign_val;
 
-void write_data(struct lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data);
-uint8_t init_lcd(struct lcd_hd44780u *lcd);
-void clean_display(struct lcd_hd44780u *lcd);
-void reset_address_counter(struct lcd_hd44780u *lcd);
-void set_address_counter(struct lcd_hd44780u *lcd, uint8_t data);
-void display_control(struct lcd_hd44780u *lcd, uint8_t data);
-void display_string(struct lcd_hd44780u *lcd, char *string, size_t string_size);
+void write_data(lcd_hd44780u *lcd, enum rs_mode rs, uint8_t data);
+uint8_t init_lcd(lcd_hd44780u *lcd);
+void clean_display(lcd_hd44780u *lcd);
+void reset_address_counter(lcd_hd44780u *lcd);
+void set_address_counter(lcd_hd44780u *lcd, uint8_t data);
+void display_control(lcd_hd44780u *lcd, uint8_t data);
+void display_string(lcd_hd44780u *lcd, char *string, size_t string_size);
+void display_routine(lcd_hd44780u *lcd);
 
 #endif  /* HD44780U_H_ */

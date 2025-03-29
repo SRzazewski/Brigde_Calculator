@@ -27,7 +27,8 @@
 /* USER CODE BEGIN Includes */
 #include "HD44780U.h"
 #include "bridge_timers.h"
-#include "state_machine.h"
+#include "bc_state_machine.h"
+#include "bridge_common.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -102,7 +103,7 @@ int main(void)
   lcd_0.pinout.db5_pin = LCD_DB5_Pin;
   lcd_0.pinout.db4_port = (uint32_t*)LCD_DB4_GPIO_Port;
   lcd_0.pinout.db4_pin = LCD_DB4_Pin;
-
+  lcd_0.curr_display_state = MODULE_IDLE_STATE;
   lcd_0.delay = &delay_62_5ns;
 
   /* USER CODE END Init */
@@ -153,6 +154,7 @@ int main(void)
       adc_value = HAL_ADC_GetValue(&hadc1);
       (void)sprintf(adc_char_value, "Value: %d", adc_value);
       clean_display(&lcd_0);
+      display_control(&lcd_0, 0x0C);
       display_string(&lcd_0, adc_char_value, sizeof(adc_char_value));
     }
   }

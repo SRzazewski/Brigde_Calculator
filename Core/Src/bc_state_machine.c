@@ -1,4 +1,4 @@
-#include "state_machine.h"
+#include "bc_state_machine.h"
 #include "HD44780U.h"
 
 bc_modules modules;
